@@ -5,12 +5,12 @@ public class Product {
     private int id;
     private String name;
     private String desc;
-    private int category;
+    private String category;
     private double price;
     // TODO: pictures
     private int onStock;
 
-    public Product(int id, String name, String desc, int category, double price, int onStock) {
+    public Product(int id, String name, String desc, String category, double price, int onStock) {
         this.id = id;
         this.name = name;
         this.desc = desc;
@@ -31,7 +31,7 @@ public class Product {
         return desc;
     }
 
-    public int getCategory() {
+    public String getCategory() {
         return category;
     }
 
