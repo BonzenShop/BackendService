@@ -1,28 +1,26 @@
 package com.bonzenshop.BackendService.controller;
 
 import com.bonzenshop.BackendService.model.Product;
-import com.bonzenshop.BackendService.service.ProductService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.bonzenshop.BackendService.service.DatabaseService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 @RestController
+@RequestMapping
 public class ShopController {
 
-    private ProductService productService;
+    public ShopController(){
 
-    public ShopController(ProductService productService){
-        this.productService = productService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/productList")
+    @GetMapping("/productList")
     public List<Product> getProductList() throws SQLException {
-        return productService.getProducts();
+        return DatabaseService.getProducts();
     }
 
 }

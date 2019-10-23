@@ -1,11 +1,13 @@
 package com.bonzenshop.BackendService.service;
 
 import com.bonzenshop.BackendService.model.Product;
+import com.bonzenshop.BackendService.model.Account;
 
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DatabaseService {
     public static final String DRIVER = "org.sqlite.JDBC";
@@ -23,15 +25,15 @@ public class DatabaseService {
             //create tables
             con.createStatement().execute("CREATE TABLE Images(Id int, Imgdata blob, Imgtype carchar(20), PRIMARY KEY(Id ASC))");
             con.createStatement().execute("CREATE TABLE Product(Id int, Name text, Description text, Category varchar(20), Price bigint, OnStock int, Picture int, PRIMARY KEY(Id ASC) FOREIGN KEY(Picture) REFERENCES Images(Id))");
-            con.createStatement().execute("CREATE TABLE User(Id int, FirstName text, LastName text, BirthDate date, Email text, Role varchar(20), PRIMARY KEY(Id ASC))");
+            con.createStatement().execute("CREATE TABLE User(Id int, FirstName text, LastName text, BirthDate date, Email text, Password text, Role varchar(20), PRIMARY KEY(Id ASC))");
             con.createStatement().execute("CREATE TABLE ShoppingCartEntry(User int, Product int, Amount int, FOREIGN KEY(User) REFERENCES User(Id), FOREIGN KEY(Product) REFERENCES Product(Id))");
 
             //fill data user
             con.createStatement().execute("insert into User values " +
-                    "('1', 'Daniel', 'Wunder', '31.01.1998', 'daniel.wunder@edu.fhdw.de', 'Admin'), " +
-                    "('2', 'Nicolas', 'Schrade', '12.12.1998', 'nicolas.schrade@edu.fhdw.de', 'Admin'), " +
-                    "('3', 'Simon', 'Berendes', '17.08.1999', 'simon.berendes@edu.fhdw.de', 'Admin'), " +
-                    "('4', 'Adrian', 'Bayerdorffer', '27.12.1998', 'adrian.bayerdorffer@edu.fhdw.de', 'Admin')");
+                    "('1', 'Daniel', 'Wunder', '31.01.1998', 'daniel.wunder@edu.fhdw.de', 'adminDaniel', 'Admin'), " +
+                    "('2', 'Nicolas', 'Schrade', '03.12.1998', 'nicolas.schrade@edu.fhdw.de', 'adminNicolas', 'Admin'), " +
+                    "('3', 'Simon', 'Berendes', '08.07.1999', 'simon.berendes@edu.fhdw.de', 'adminSimon', 'Admin'), " +
+                    "('4', 'Adrian', 'Bayerdorffer', '27.12.1998', 'adrian.bayerdorffer@edu.fhdw.de', 'adminAdrian', 'Admin')");
 
             //fill data product
             con.createStatement().execute("insert into Product values " +
@@ -62,5 +64,22 @@ public class DatabaseService {
         }
 
         return products;
+    }
+
+    public static Optional<Account> getAccount(String email) {
+        Account acc = null;
+        try{
+            ResultSet resultSet = con.createStatement().executeQuery("select * from User where Email = '"+email+"'");
+            acc = new Account(resultSet.getInt("Id"),
+                    resultSet.getString("Email"),
+                    resultSet.getString("Password"),
+                    resultSet.getString("FirstName"),
+                    resultSet.getString("LastName"),
+                    resultSet.getString("BirthDate"),
+                    resultSet.getString("Role"));
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return Optional.ofNullable(acc);
     }
 }
