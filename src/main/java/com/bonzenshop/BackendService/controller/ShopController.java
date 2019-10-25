@@ -1,5 +1,6 @@
 package com.bonzenshop.BackendService.controller;
 
+import com.bonzenshop.BackendService.model.Account;
 import com.bonzenshop.BackendService.model.Product;
 import com.bonzenshop.BackendService.service.DatabaseService;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,11 @@ public class ShopController {
     @GetMapping("/productList")
     public List<Product> getProductList() throws SQLException {
         return DatabaseService.getProducts();
+    }
+
+    @GetMapping("/userList")
+    public List<Account> getUserList() throws SQLException {
+        return DatabaseService.getAccounts();
     }
 
 }

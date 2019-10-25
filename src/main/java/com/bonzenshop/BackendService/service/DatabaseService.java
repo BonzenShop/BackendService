@@ -33,7 +33,9 @@ public class DatabaseService {
                     "('1', 'Daniel', 'Wunder', '31.01.1998', 'daniel.wunder@edu.fhdw.de', 'adminDaniel', 'Admin'), " +
                     "('2', 'Nicolas', 'Schrade', '03.12.1998', 'nicolas.schrade@edu.fhdw.de', 'adminNicolas', 'Admin'), " +
                     "('3', 'Simon', 'Berendes', '08.07.1999', 'simon.berendes@edu.fhdw.de', 'adminSimon', 'Admin'), " +
-                    "('4', 'Adrian', 'Bayerdorffer', '27.12.1998', 'adrian.bayerdorffer@edu.fhdw.de', 'adminAdrian', 'Admin')");
+                    "('4', 'Adrian', 'Bayerdorffer', '27.12.1998', 'adrian.bayerdorffer@edu.fhdw.de', 'adminAdrian', 'Admin'), " +
+                    "('5', 'Max', 'Mustermann', '01.01.1990', 'max.mustermann@bonzenshop.com', 'max123', 'Mitarbeiter'), " +
+                    "('6', 'Marie', 'Musterfrau', '02.02.1995', 'marie.musterfrau@gmail.com', 'marie123', 'Kunde')");
 
             //fill data product
             con.createStatement().execute("insert into Product values " +
@@ -64,6 +66,21 @@ public class DatabaseService {
         }
 
         return products;
+    }
+
+    public static List<Account> getAccounts() throws SQLException {
+        ResultSet resultSet = con.createStatement().executeQuery("select * from User");
+        List<Account> accounts = new ArrayList<Account>();
+        while(resultSet.next()){
+            accounts.add(new Account(resultSet.getInt("Id"),
+                    resultSet.getString("Email"),
+                    resultSet.getString("FirstName"),
+                    resultSet.getString("LastName"),
+                    resultSet.getString("BirthDate"),
+                    resultSet.getString("Role")));
+        }
+
+        return accounts;
     }
 
     public static Optional<Account> getAccount(String email) {

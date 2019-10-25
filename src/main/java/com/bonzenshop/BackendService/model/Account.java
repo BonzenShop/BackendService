@@ -21,6 +21,17 @@ public class Account {
         this.token = null;
     }
 
+    public Account(int id, String email, String firstName, String lastName, String birthDate, String role) {
+        this.id = id;
+        this.email = email;
+        this.password = null;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.role = role;
+        this.token = null;
+    }
+
     public Account(Account account, String token){
         this.id = account.id;
         this.email = account.email;
