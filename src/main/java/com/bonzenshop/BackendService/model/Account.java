@@ -24,7 +24,7 @@ public class Account {
     public Account(Account account, String token){
         this.id = account.id;
         this.email = account.email;
-        this.password = account.password;
+        this.password = null;
         this.firstName = account.firstName;
         this.lastName = account.lastName;
         this.birthDate = account.birthDate;
