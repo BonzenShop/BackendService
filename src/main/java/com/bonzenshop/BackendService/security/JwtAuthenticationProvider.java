@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import com.bonzenshop.BackendService.service.JwtTokenService;
 
@@ -23,6 +25,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Autowired
+    public UserDetailsService userDetailsService;
+
+    @Autowired
     public JwtAuthenticationProvider(JwtTokenService jwtService) {
         this.jwtService = jwtService;
     }
@@ -33,8 +38,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         try {
             String token = (String) authentication.getCredentials();
             String username = jwtService.getUsernameFromToken(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            return jwtService.validateToken(token)
+            return jwtService.validateToken(token, userDetails)
                     .map(aBoolean -> new JwtAuthenticatedProfile(username))
                     .orElseThrow(() -> new JwtAuthenticationException("JWT Token validation failed"));
 
