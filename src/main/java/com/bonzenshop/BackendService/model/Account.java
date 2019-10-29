@@ -1,5 +1,8 @@
 package com.bonzenshop.BackendService.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Account {
     private int id;
     private String email;
@@ -9,6 +12,23 @@ public class Account {
     private String birthDate;
     private String role;
     private String token;
+
+    @JsonCreator
+    public Account(@JsonProperty("email") String email,
+                   @JsonProperty("password") String password,
+                   @JsonProperty("firstName") String firstName,
+                   @JsonProperty("lastName") String lastName,
+                   @JsonProperty("birthDate") String birthDate)
+    {
+        this.id = 2345;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.role = "Kunde";
+        this.token = null;
+    }
 
     public Account(int id, String email, String password, String firstName, String lastName, String birthDate, String role) {
         this.id = id;

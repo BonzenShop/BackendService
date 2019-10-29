@@ -11,6 +11,7 @@
 	<groupId>com.bonzenshop</groupId>
 	<artifactId>BackendService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>BackendService</name>
 	<description>Backend service for bonzen shop</description>
 
@@ -40,6 +41,16 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.bonzenshop</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.27.2.1</version>
+			<scope>system</scope>
+			<systemPath>
+				${basedir}/lib/sqlite-jdbc-3.27.2.1.jar
+			</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -47,6 +58,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<includeSystemScope>true</includeSystemScope>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
