@@ -14,6 +14,7 @@ public class BackendServiceApplication {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		SpringApplication.run(BackendServiceApplication.class, args);
+		System.out.println("App running");
 		DatabaseService.getConnection();
 	}
 
