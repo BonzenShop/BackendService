@@ -86,32 +86,42 @@ public class DatabaseService {
         return rowsAffected;
     }
 
-    public static int createOrder(Order order) {
+    public static int createOrder(List<Order> orderList) {
         int rowsAffected = 0;
         try{
-            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Orders(User, OrderDate, Name, Category, Price, Amount, TotalPrice) VALUES"+
-                    "('"+order.getUser()+"','"+order.getOrderDate()+"','"+order.getName()+"','"+order.getCategory()+"','"+order.getPrice()+"','"+order.getAmount()+"','"+order.getTotalPrice()+"')");
+            String SqlOrderString = "";
+            for(Order order: orderList){
+                SqlOrderString += "('"+order.getUser()+"','"+order.getOrderDate()+"','"+order.getName()+"','"+order.getCategory()+"','"+order.getPrice()+"','"+order.getAmount()+"','"+order.getTotalPrice()+"')";
+                if(orderList.indexOf(order) < orderList.size()-1){
+                    SqlOrderString += ",";
+                }
+            }
+            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Orders(User, OrderDate, Name, Category, Price, Amount, TotalPrice) VALUES"+SqlOrderString);
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
         return rowsAffected;
     }
 
-    public static List<Order> getOrders() throws SQLException {
-        ResultSet resultSet = con.createStatement().executeQuery("select * from Orders");
-        List<Order> orders = new ArrayList<Order>();
-        while(resultSet.next()){
-            orders.add(new Order(resultSet.getInt("Id"),
-                    resultSet.getInt("User"),
-                    resultSet.getString("OrderDate"),
-                    resultSet.getString("Name"),
-                    resultSet.getString("Category"),
-                    resultSet.getDouble("Price"),
-                    resultSet.getInt("Amount"),
-                    resultSet.getDouble("TotalPrice")));
+    public static Optional<List<Order>> getOrders() {
+        try{
+            ResultSet resultSet = con.createStatement().executeQuery("select * from Orders");
+            List<Order> orders = new ArrayList<Order>();
+            while(resultSet.next()){
+                orders.add(new Order(resultSet.getInt("Id"),
+                        resultSet.getInt("User"),
+                        resultSet.getString("OrderDate"),
+                        resultSet.getString("Name"),
+                        resultSet.getString("Category"),
+                        resultSet.getDouble("Price"),
+                        resultSet.getInt("Amount"),
+                        resultSet.getDouble("TotalPrice")));
+            }
+            return Optional.ofNullable(orders);
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+            return Optional.empty();
         }
-
-        return orders;
     }
 
     private static void initDB(){

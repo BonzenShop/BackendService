@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET, "/userList").authenticated()
+                .mvcMatchers(HttpMethod.GET, "/orderList").authenticated()
                 .mvcMatchers(HttpMethod.POST, "/order").authenticated();
 
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
