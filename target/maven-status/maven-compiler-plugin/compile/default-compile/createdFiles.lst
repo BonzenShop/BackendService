@@ -2,6 +2,7 @@ com\bonzenshop\BackendService\service\JwtTokenService.class
 com\bonzenshop\BackendService\service\AuthenticationService.class
 com\bonzenshop\BackendService\security\JwtAuthentication.class
 com\bonzenshop\BackendService\config\WebSecurityConfig.class
+com\bonzenshop\BackendService\model\Order.class
 com\bonzenshop\BackendService\BackendServiceApplication.class
 com\bonzenshop\BackendService\security\JwtAuthenticationProvider.class
 com\bonzenshop\BackendService\model\JWTTokenResponse.class
