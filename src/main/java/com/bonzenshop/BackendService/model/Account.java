@@ -20,7 +20,7 @@ public class Account {
                    @JsonProperty("lastName") String lastName,
                    @JsonProperty("birthDate") String birthDate)
     {
-        this.id = 2345;
+        this.id = 0;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
