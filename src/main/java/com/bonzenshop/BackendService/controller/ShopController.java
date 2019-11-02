@@ -9,6 +9,7 @@ import com.bonzenshop.BackendService.service.JwtTokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.ws.Response;
@@ -38,7 +39,7 @@ public class ShopController {
     }
 
     @PostMapping("/order")
-    public ResponseEntity placeOrder(@RequestBody List<Order> orderList) throws SQLException {
+    public ResponseEntity placeOrder(@RequestBody List<Order> orderList){
         int rowsAffected = DatabaseService.createOrder(orderList);
         if(rowsAffected > 0){
             return new ResponseEntity(HttpStatus.OK);
@@ -49,13 +50,22 @@ public class ShopController {
 
     @PreAuthorize("hasAnyRole('Mitarbeiter', 'Admin')")
     @GetMapping("/orderList")
-    public ResponseEntity<List<Order>> getOrderList() throws SQLException {
+    public ResponseEntity<List<Order>> getOrderList(){
         try{
             return new ResponseEntity<>(DatabaseService.getOrders().get(), HttpStatus.OK);
         }catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
 
+    @GetMapping("/myOrderList")
+    public ResponseEntity<List<Order>> getMyOrderList() {
+        try{
+            String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            return new ResponseEntity<>(DatabaseService.getOrders(userEmail).get(), HttpStatus.OK);
+        }catch(NoSuchElementException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 }

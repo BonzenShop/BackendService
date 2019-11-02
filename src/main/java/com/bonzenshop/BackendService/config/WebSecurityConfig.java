@@ -58,7 +58,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.GET, "/userList").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/orderList").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/order").authenticated();
+                .mvcMatchers(HttpMethod.POST, "/order").authenticated()
+                .mvcMatchers(HttpMethod.GET, "/myOrderList").authenticated();
 
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
         httpSecurity.headers().cacheControl();

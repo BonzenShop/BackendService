@@ -124,6 +124,27 @@ public class DatabaseService {
         }
     }
 
+    public static Optional<List<Order>> getOrders(String email) {
+        try{
+            ResultSet resultSet = con.createStatement().executeQuery("SELECT * FROM Orders WHERE User = (SELECT Id FROM Users WHERE Email = '"+email+"')");
+            List<Order> orders = new ArrayList<Order>();
+            while(resultSet.next()){
+                orders.add(new Order(resultSet.getInt("Id"),
+                        resultSet.getInt("User"),
+                        resultSet.getString("OrderDate"),
+                        resultSet.getString("Name"),
+                        resultSet.getString("Category"),
+                        resultSet.getDouble("Price"),
+                        resultSet.getInt("Amount"),
+                        resultSet.getDouble("TotalPrice")));
+            }
+            return Optional.ofNullable(orders);
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+            return Optional.empty();
+        }
+    }
+
     private static void initDB(){
         try{
             //create tables
