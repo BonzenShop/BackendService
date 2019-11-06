@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
 import javax.xml.ws.Response;
 import java.sql.SQLException;
 import java.util.List;
@@ -29,7 +30,7 @@ public class ShopController {
 
     @GetMapping("/productList")
     public List<Product> getProductList() throws SQLException {
-        return DatabaseService.getProducts();
+        return DatabaseService.getProducts().get();
     }
 
     @PreAuthorize("hasAnyRole('Mitarbeiter', 'Admin')")
@@ -65,6 +66,21 @@ public class ShopController {
             return new ResponseEntity<>(DatabaseService.getOrders(userEmail).get(), HttpStatus.OK);
         }catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/saveProduct")
+    public ResponseEntity<List<Product>> saveProduct(@RequestBody Product product) {
+        int rowsAffected = 0;
+        if(product.getId() > 0){
+            rowsAffected = DatabaseService.updateProduct(product);
+        }else{
+            rowsAffected = DatabaseService.addProduct(product);
+        }
+        if(rowsAffected > 0){
+            return new ResponseEntity(DatabaseService.getProducts().get(), HttpStatus.OK);
+        }else{
+            return  new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
 

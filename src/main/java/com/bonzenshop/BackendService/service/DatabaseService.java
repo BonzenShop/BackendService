@@ -4,6 +4,7 @@ import com.bonzenshop.BackendService.model.Order;
 import com.bonzenshop.BackendService.model.Product;
 import com.bonzenshop.BackendService.model.Account;
 
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
@@ -28,19 +29,23 @@ public class DatabaseService {
         }
     }
 
-    public static List<Product> getProducts() throws SQLException {
-        ResultSet resultSet = con.createStatement().executeQuery("select * from Products");
-        List<Product> products = new ArrayList<Product>();
-        while(resultSet.next()){
-            products.add(new Product(resultSet.getInt("Id"),
-                    resultSet.getString("Name"),
-                    resultSet.getString("Description"),
-                    resultSet.getString("Category"),
-                    resultSet.getDouble("Price"),
-                    resultSet.getInt("OnStock")));
+    public static Optional<List<Product>> getProducts() {
+        try{
+            List<Product> products = new ArrayList<Product>();
+            ResultSet resultSet = con.createStatement().executeQuery("select * from Products");
+            while(resultSet.next()){
+                products.add(new Product(resultSet.getInt("Id"),
+                        resultSet.getString("Name"),
+                        resultSet.getString("Description"),
+                        resultSet.getString("Category"),
+                        resultSet.getDouble("Price"),
+                        resultSet.getInt("OnStock")));
+            }
+            return Optional.ofNullable(products);
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+            return Optional.empty();
         }
-
-        return products;
     }
 
     public static List<Account> getAccounts() throws SQLException {
@@ -143,6 +148,33 @@ public class DatabaseService {
             System.out.println("SQL Error: "+e.getMessage());
             return Optional.empty();
         }
+    }
+
+    public static int addProduct(Product product) {
+        int rowsAffected = 0;
+        try{
+            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Products(Name, Description, Category, Price, OnStock) VALUES"+
+                    "('"+product.getName()+"','"+product.getDesc()+"','"+product.getCategory()+"','"+product.getPrice()+"','"+product.getOnStock()+"')");
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return rowsAffected;
+    }
+
+    public static int updateProduct(Product product) {
+        int rowsAffected = 0;
+        try{
+            rowsAffected = con.createStatement().executeUpdate("UPDATE Products SET "+
+                    "Name = '"+product.getName()+"', "+
+                    "Description = '"+product.getDesc()+"', "+
+                    "Category = '"+product.getCategory()+"', "+
+                    "Price = '"+product.getPrice()+"', "+
+                    "OnStock = '"+product.getOnStock()+"' "+
+                    "WHERE Id = '"+product.getId()+"'");
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return rowsAffected;
     }
 
     private static void initDB(){

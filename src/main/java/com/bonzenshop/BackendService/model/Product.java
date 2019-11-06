@@ -1,5 +1,8 @@
 package com.bonzenshop.BackendService.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Product {
 
     private int id;
@@ -10,7 +13,13 @@ public class Product {
     // TODO: pictures
     private int onStock;
 
-    public Product(int id, String name, String desc, String category, double price, int onStock) {
+    @JsonCreator
+    public Product(@JsonProperty int id,
+                 @JsonProperty String name,
+                 @JsonProperty String desc,
+                 @JsonProperty String category,
+                 @JsonProperty double price,
+                 @JsonProperty int onStock){
         this.id = id;
         this.name = name;
         this.desc = desc;
