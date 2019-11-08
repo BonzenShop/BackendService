@@ -69,6 +69,7 @@ public class ShopController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('Mitarbeiter', 'Admin')")
     @PostMapping("/saveProduct")
     public ResponseEntity<List<Product>> saveProduct(@RequestBody Product product) {
         int rowsAffected = 0;

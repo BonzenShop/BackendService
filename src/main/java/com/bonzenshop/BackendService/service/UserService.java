@@ -16,7 +16,7 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account user = DatabaseService.getAccount(username).get();
+        Account user = DatabaseService.getAccountByEmail(username).get();
         if(user == null){
             throw new UsernameNotFoundException("Invalid username or password.");
         }

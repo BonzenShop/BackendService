@@ -63,10 +63,27 @@ public class DatabaseService {
         return accounts;
     }
 
-    public static Optional<Account> getAccount(String email) {
+    public static Optional<Account> getAccountByEmail(String email) {
         Account acc = null;
         try{
             ResultSet resultSet = con.createStatement().executeQuery("select * from Users where Email = '"+email+"'");
+            acc = new Account(resultSet.getInt("Id"),
+                    resultSet.getString("Email"),
+                    resultSet.getString("Password"),
+                    resultSet.getString("FirstName"),
+                    resultSet.getString("LastName"),
+                    resultSet.getString("BirthDate"),
+                    resultSet.getString("Role"));
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return Optional.ofNullable(acc);
+    }
+
+    public static Optional<Account> getAccountById(int id) {
+        Account acc = null;
+        try{
+            ResultSet resultSet = con.createStatement().executeQuery("select * from Users where Id = '"+id+"'");
             acc = new Account(resultSet.getInt("Id"),
                     resultSet.getString("Email"),
                     resultSet.getString("Password"),
@@ -171,6 +188,26 @@ public class DatabaseService {
                     "Price = '"+product.getPrice()+"', "+
                     "OnStock = '"+product.getOnStock()+"' "+
                     "WHERE Id = '"+product.getId()+"'");
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return rowsAffected;
+    }
+
+    public static int updateAccount(Account account) {
+        int rowsAffected = 0;
+        try{
+            //Create String to only change attributes that are given (not null and not empty)
+            String setString = "";
+            setString += account.getFirstName() != null && !account.getFirstName().trim().isEmpty() ? ("FirstName = '"+account.getFirstName()+"', ") : "";
+            setString += account.getLastName() != null && !account.getLastName().trim().isEmpty() ? ("LastName = '"+account.getLastName()+"', ") : "";
+            setString += account.getEmail() != null && !account.getEmail().trim().isEmpty() ? ("Email = '"+account.getEmail()+"', ") : "";
+            setString += account.getBirthDate() != null && !account.getBirthDate().trim().isEmpty() ? ("BirthDate = '"+account.getBirthDate()+"', ") : "";
+            setString += account.getPassword() != null && !account.getPassword().trim().isEmpty() ? ("Password = '"+account.getPassword()+"', ") : "";
+            setString = setString.substring(0, setString.length()-2);
+            rowsAffected = con.createStatement().executeUpdate("UPDATE Users SET "+
+                    setString+" "+
+                    "WHERE Id = '"+account.getId()+"'");
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
