@@ -33,6 +33,7 @@ public class DatabaseService {
         try{
             List<Product> products = new ArrayList<Product>();
             ResultSet resultSet = con.createStatement().executeQuery("select * from Products");
+            //TODO get image(s) for this product
             while(resultSet.next()){
                 products.add(new Product(resultSet.getInt("Id"),
                         resultSet.getString("Name"),
@@ -172,6 +173,7 @@ public class DatabaseService {
         try{
             rowsAffected = con.createStatement().executeUpdate("INSERT INTO Products(Name, Description, Category, Price, OnStock) VALUES"+
                     "('"+product.getName()+"','"+product.getDesc()+"','"+product.getCategory()+"','"+product.getPrice()+"','"+product.getOnStock()+"')");
+            //TODO save image(s)
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -188,6 +190,7 @@ public class DatabaseService {
                     "Price = '"+product.getPrice()+"', "+
                     "OnStock = '"+product.getOnStock()+"' "+
                     "WHERE Id = '"+product.getId()+"'");
+            //TODO save image(s)
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }

@@ -15,11 +15,11 @@ public class Product {
 
     @JsonCreator
     public Product(@JsonProperty int id,
-                 @JsonProperty String name,
-                 @JsonProperty String desc,
-                 @JsonProperty String category,
-                 @JsonProperty double price,
-                 @JsonProperty int onStock){
+                   @JsonProperty String name,
+                   @JsonProperty String desc,
+                   @JsonProperty String category,
+                   @JsonProperty double price,
+                   @JsonProperty int onStock){
         this.id = id;
         this.name = name;
         this.desc = desc;
