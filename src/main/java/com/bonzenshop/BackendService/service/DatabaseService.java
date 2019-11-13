@@ -100,8 +100,14 @@ public class DatabaseService {
     public static int createAccount(Account account) {
         int rowsAffected = 0;
         try{
-            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Users(FirstName,LastName,BirthDate,Email,Password,Role) VALUES"+
-                    "('"+account.getFirstName()+"','"+account.getLastName()+"','"+account.getBirthDate()+"','"+account.getEmail()+"','"+account.getPassword()+"','Kunde')");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Users(FirstName,LastName,BirthDate,Email,Password,Role) VALUES(?,?,?,?,?,?)");
+            statement.setString(1, account.getFirstName());
+            statement.setString(2, account.getLastName());
+            statement.setString(3, account.getBirthDate());
+            statement.setString(4, account.getEmail());
+            statement.setString(5, account.getPassword());
+            statement.setString(6, account.getRole());
+            rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -111,14 +117,21 @@ public class DatabaseService {
     public static int createOrder(List<Order> orderList) {
         int rowsAffected = 0;
         try{
-            String SqlOrderString = "";
-            for(Order order: orderList){
-                SqlOrderString += "('"+order.getUser()+"','"+order.getOrderDate()+"','"+order.getName()+"','"+order.getCategory()+"','"+order.getPrice()+"','"+order.getAmount()+"','"+order.getTotalPrice()+"')";
-                if(orderList.indexOf(order) < orderList.size()-1){
-                    SqlOrderString += ",";
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Orders(User, OrderDate, Name, Category, Price, Amount, TotalPrice) VALUES(?,?,?,?,?,?,?)");
+            for(int i = 0; i < orderList.size(); i++){
+                Order order = orderList.get(i);
+                if(i > 0){
+                    statement.addBatch(",(?,?,?,?,?,?,?)");
                 }
+                statement.setInt(i*7+1, order.getUser());
+                statement.setString(i*7+2, order.getOrderDate());
+                statement.setString(i*7+3, order.getName());
+                statement.setString(i*7+4, order.getCategory());
+                statement.setDouble(i*7+5, order.getPrice());
+                statement.setInt(i*7+6, order.getAmount());
+                statement.setDouble(i*7+7, order.getTotalPrice());
             }
-            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Orders(User, OrderDate, Name, Category, Price, Amount, TotalPrice) VALUES"+SqlOrderString);
+            rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -170,8 +183,15 @@ public class DatabaseService {
     public static int addProduct(Product product) {
         int rowsAffected = 0;
         try{
-            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Products(Name, Description, Category, Price, OnStock, ImgData, ImgType) VALUES"+
-                    "('"+product.getName()+"','"+product.getDesc()+"','"+product.getCategory()+"','"+product.getPrice()+"','"+product.getOnStock()+"','"+product.getImgData()+"','"+product.getImgType()+"')");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Products(Name, Description, Category, Price, OnStock, ImgData, ImgType) VALUES(?,?,?,?,?,?,?)");
+            statement.setString(1, product.getName());
+            statement.setString(2, product.getDesc());
+            statement.setString(3, product.getCategory());
+            statement.setDouble(4, product.getPrice());
+            statement.setDouble(5, product.getOnStock());
+            statement.setString(6, product.getImgData());
+            statement.setString(7, product.getImgType());
+            rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -200,17 +220,54 @@ public class DatabaseService {
     public static int updateAccount(Account account) {
         int rowsAffected = 0;
         try{
-            //Create String to only change attributes that are given (not null and not empty)
-            String setString = "";
-            setString += account.getFirstName() != null && !account.getFirstName().trim().isEmpty() ? ("FirstName = '"+account.getFirstName()+"', ") : "";
-            setString += account.getLastName() != null && !account.getLastName().trim().isEmpty() ? ("LastName = '"+account.getLastName()+"', ") : "";
-            setString += account.getEmail() != null && !account.getEmail().trim().isEmpty() ? ("Email = '"+account.getEmail()+"', ") : "";
-            setString += account.getBirthDate() != null && !account.getBirthDate().trim().isEmpty() ? ("BirthDate = '"+account.getBirthDate()+"', ") : "";
-            setString += account.getPassword() != null && !account.getPassword().trim().isEmpty() ? ("Password = '"+account.getPassword()+"', ") : "";
-            setString = setString.substring(0, setString.length()-2);
-            rowsAffected = con.createStatement().executeUpdate("UPDATE Users SET "+
-                    setString+" "+
-                    "WHERE Id = '"+account.getId()+"'");
+            PreparedStatement statement = con.prepareStatement("UPDATE Users SET ");
+            int parameterIndex = 1;
+            int indexCheck = 1;
+            if(account.getFirstName() != null && !account.getFirstName().trim().isEmpty()){
+                statement.addBatch("FirstName = ?");
+                statement.setString(parameterIndex, account.getFirstName());
+                parameterIndex++;
+            }
+            if(account.getLastName() != null && !account.getLastName().trim().isEmpty()){
+                if(indexCheck < parameterIndex){
+                    statement.addBatch(", ");
+                    indexCheck++;
+                }
+                statement.addBatch("LastName = ?");
+                statement.setString(parameterIndex, account.getLastName());
+                parameterIndex++;
+            }
+            if(account.getEmail() != null && !account.getEmail().trim().isEmpty()){
+                if(indexCheck < parameterIndex){
+                    statement.addBatch(", ");
+                    indexCheck++;
+                }
+                statement.addBatch("Email = ?");
+                statement.setString(parameterIndex, account.getEmail());
+                parameterIndex++;
+            }
+            if(account.getBirthDate() != null && !account.getBirthDate().trim().isEmpty()){
+                if(indexCheck < parameterIndex){
+                    statement.addBatch(", ");
+                    indexCheck++;
+                }
+                statement.addBatch("BirthDate = ?");
+                statement.setString(parameterIndex, account.getBirthDate());
+                parameterIndex++;
+            }
+            if(account.getPassword() != null && !account.getPassword().trim().isEmpty()){
+                if(indexCheck < parameterIndex){
+                    statement.addBatch(", ");
+                    indexCheck++;
+                }
+                statement.addBatch("Password = ?");
+                statement.setString(parameterIndex, account.getPassword());
+                parameterIndex++;
+            }
+            statement.addBatch(" WHERE Id = ?");
+            statement.setInt(parameterIndex, account.getId());
+
+            rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
