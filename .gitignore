@@ -28,6 +28,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-### Database ###
-bonzenshopdb.sqlite

@@ -10,7 +10,8 @@ public class Product {
     private String desc;
     private String category;
     private double price;
-    // TODO: pictures
+    private String imgData;
+    private String imgType;
     private int onStock;
 
     @JsonCreator
@@ -19,12 +20,16 @@ public class Product {
                    @JsonProperty String desc,
                    @JsonProperty String category,
                    @JsonProperty double price,
+                   @JsonProperty String imgData,
+                   @JsonProperty String imgType,
                    @JsonProperty int onStock){
         this.id = id;
         this.name = name;
         this.desc = desc;
         this.category = category;
         this.price = price;
+        this.imgData = imgData;
+        this.imgType = imgType;
         this.onStock = onStock;
     }
 
@@ -42,6 +47,22 @@ public class Product {
 
     public String getCategory() {
         return category;
+    }
+
+    public String getImgData() {
+        return imgData;
+    }
+
+    public void setImgData(String imgData) {
+        this.imgData = imgData;
+    }
+
+    public String getImgType() {
+        return imgType;
+    }
+
+    public void setImgType(String imgType) {
+        this.imgType = imgType;
     }
 
     public double getPrice() {

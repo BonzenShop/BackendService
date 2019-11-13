@@ -5,10 +5,7 @@ import com.bonzenshop.BackendService.model.Order;
 import com.bonzenshop.BackendService.model.Product;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +22,6 @@ public class DatabaseService {
         File db = new File("bonzenshopdb.sqlite");
         if(!db.exists()){
             con = DriverManager.getConnection(JDBC_URL);
-            initDB();
         }else{
             con = DriverManager.getConnection(JDBC_URL);
         }
@@ -35,13 +31,14 @@ public class DatabaseService {
         try{
             List<Product> products = new ArrayList<Product>();
             ResultSet resultSet = con.createStatement().executeQuery("select * from Products");
-            //TODO get image(s) for this product
             while(resultSet.next()){
                 products.add(new Product(resultSet.getInt("Id"),
                         resultSet.getString("Name"),
                         resultSet.getString("Description"),
                         resultSet.getString("Category"),
                         resultSet.getDouble("Price"),
+                        resultSet.getString("ImgData"),
+                        resultSet.getString("ImgType"),
                         resultSet.getInt("OnStock")));
             }
             return Optional.ofNullable(products);
@@ -173,9 +170,8 @@ public class DatabaseService {
     public static int addProduct(Product product) {
         int rowsAffected = 0;
         try{
-            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Products(Name, Description, Category, Price, OnStock) VALUES"+
-                    "('"+product.getName()+"','"+product.getDesc()+"','"+product.getCategory()+"','"+product.getPrice()+"','"+product.getOnStock()+"')");
-            //TODO save image(s)
+            rowsAffected = con.createStatement().executeUpdate("INSERT INTO Products(Name, Description, Category, Price, OnStock, ImgData, ImgType) VALUES"+
+                    "('"+product.getName()+"','"+product.getDesc()+"','"+product.getCategory()+"','"+product.getPrice()+"','"+product.getOnStock()+"','"+product.getImgData()+"','"+product.getImgType()+"')");
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -185,14 +181,16 @@ public class DatabaseService {
     public static int updateProduct(Product product) {
         int rowsAffected = 0;
         try{
-            rowsAffected = con.createStatement().executeUpdate("UPDATE Products SET "+
-                    "Name = '"+product.getName()+"', "+
-                    "Description = '"+product.getDesc()+"', "+
-                    "Category = '"+product.getCategory()+"', "+
-                    "Price = '"+product.getPrice()+"', "+
-                    "OnStock = '"+product.getOnStock()+"' "+
-                    "WHERE Id = '"+product.getId()+"'");
-            //TODO save image(s)
+            PreparedStatement statement = con.prepareStatement("UPDATE Products SET Name = ?, Description = ?, Category = ?, Price = ?, OnStock = ?, ImgData = ?, ImgType = ? WHERE Id = ?");
+            statement.setString(1, product.getName());
+            statement.setString(2, product.getDesc());
+            statement.setString(3, product.getCategory());
+            statement.setDouble(4, product.getPrice());
+            statement.setDouble(5, product.getOnStock());
+            statement.setString(6, product.getImgData());
+            statement.setString(7, product.getImgType());
+            statement.setInt(8, product.getId());
+            rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -222,8 +220,7 @@ public class DatabaseService {
     private static void initDB(){
         try{
             //create tables
-            con.createStatement().execute("CREATE TABLE Images(Id INTEGER PRIMARY KEY, Imgdata blob, Imgtype carchar(20))");
-            con.createStatement().execute("CREATE TABLE Products(Id INTEGER PRIMARY KEY, Name text, Description text, Category varchar(20), Price bigint, OnStock INTEGER, Picture INTEGER, FOREIGN KEY(Picture) REFERENCES Image(Id))");
+            con.createStatement().execute("CREATE TABLE Products(Id INTEGER PRIMARY KEY, Name text, Description text, Category varchar(20), Price bigint, OnStock INTEGER, ImgData text, ImgType varchar(20))");
             con.createStatement().execute("CREATE TABLE Users(Id INTEGER PRIMARY KEY, FirstName text, LastName text, BirthDate date, Email text, Password text, Role varchar(20))");
             con.createStatement().execute("CREATE TABLE Orders(Id INTEGER PRIMARY KEY, User INTEGER, OrderDate date, Name text, Category varchar(20), Price bigint,  Amount INTEGER, TotalPrice bigint, FOREIGN KEY(User) REFERENCES User(Id))");
 
