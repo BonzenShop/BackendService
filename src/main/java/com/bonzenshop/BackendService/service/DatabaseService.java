@@ -1,6 +1,7 @@
 package com.bonzenshop.BackendService.service;
 
 import com.bonzenshop.BackendService.model.Account;
+import com.bonzenshop.BackendService.model.ChangeRoleRequest;
 import com.bonzenshop.BackendService.model.Order;
 import com.bonzenshop.BackendService.model.Product;
 
@@ -267,6 +268,43 @@ public class DatabaseService {
             statement.addBatch(" WHERE Id = ?");
             statement.setInt(parameterIndex, account.getId());
 
+            rowsAffected = statement.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return rowsAffected;
+    }
+
+    public static int changeRole(ChangeRoleRequest data) {
+        int rowsAffected = 0;
+        try{
+            PreparedStatement statement = con.prepareStatement("UPDATE Users SET Role = ? WHERE Id = ?");
+            statement.setString(1, data.getRole());
+            statement.setInt(2, data.getUser());
+            rowsAffected = statement.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return rowsAffected;
+    }
+
+    public static int resetPasswort(int userId) {
+        int rowsAffected = 0;
+        try{
+            PreparedStatement statement = con.prepareStatement("UPDATE Users SET Password = 'ichbinreich' WHERE Id = ?");
+            statement.setInt(1, userId);
+            rowsAffected = statement.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+        }
+        return rowsAffected;
+    }
+
+    public static int deleteProduct(int productId) {
+        int rowsAffected = 0;
+        try{
+            PreparedStatement statement = con.prepareStatement("DELETE FROM Products WHERE Id = ?");
+            statement.setInt(1, productId);
             rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());

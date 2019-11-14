@@ -15,6 +15,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.Resource;
 
@@ -61,7 +65,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST, "/order").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/myOrderList").authenticated()
                 .mvcMatchers(HttpMethod.POST, "/saveProduct").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/updateUser").authenticated();
+                .mvcMatchers(HttpMethod.POST, "/updateUser").authenticated()
+                .mvcMatchers(HttpMethod.POST, "/saveProduct").authenticated()
+                .mvcMatchers(HttpMethod.POST, "/changeRole").authenticated()
+                .mvcMatchers(HttpMethod.POST, "/resetPassword").authenticated()
+                .mvcMatchers(HttpMethod.POST, "/deleteProduct").authenticated();
 
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
         httpSecurity.headers().cacheControl();

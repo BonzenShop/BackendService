@@ -20,7 +20,7 @@ public class JwtTokenService {
     private static final String AUTHORITIES_KEY = "authority";
     private static String secret = "mySecret";
 
-    private static int expiration = 604800;
+    private static int expiration = 86400; //86400ms
 
     public static String generateToken(String username, String role) {
         final Date createdDate = new Date();
@@ -36,7 +36,7 @@ public class JwtTokenService {
     }
 
     private static Date calculateExpirationDate(Date createdDate) {
-        return new Date(createdDate.getTime() + expiration * 10000);
+        return new Date(createdDate.getTime() + expiration * 1000);
     }
 
     public String getUsernameFromToken(String token) {

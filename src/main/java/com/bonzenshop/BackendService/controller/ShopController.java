@@ -2,6 +2,7 @@ package com.bonzenshop.BackendService.controller;
 
 import com.bonzenshop.BackendService.exception.EntityNotFoundException;
 import com.bonzenshop.BackendService.model.Account;
+import com.bonzenshop.BackendService.model.ChangeRoleRequest;
 import com.bonzenshop.BackendService.model.Order;
 import com.bonzenshop.BackendService.model.Product;
 import com.bonzenshop.BackendService.service.DatabaseService;
@@ -78,6 +79,42 @@ public class ShopController {
         }else{
             rowsAffected = DatabaseService.addProduct(product);
         }
+        if(rowsAffected > 0){
+            return new ResponseEntity(DatabaseService.getProducts().get(), HttpStatus.OK);
+        }else{
+            return  new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('Admin')")
+    @PostMapping("/changeRole")
+    public ResponseEntity changeRole(@RequestBody ChangeRoleRequest request) {
+        int rowsAffected = 0;
+        rowsAffected = DatabaseService.changeRole(request);
+        if(rowsAffected > 0){
+            return new ResponseEntity(HttpStatus.OK);
+        }else{
+            return  new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('Admin')")
+    @PostMapping("/resetPassword")
+    public ResponseEntity resetPassword(@RequestBody int userId) {
+        int rowsAffected = 0;
+        rowsAffected = DatabaseService.resetPasswort(userId);
+        if(rowsAffected > 0){
+            return new ResponseEntity(HttpStatus.OK);
+        }else{
+            return  new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('Mitarbeiter', 'Admin')")
+    @PostMapping("/deleteProduct")
+    public ResponseEntity<List<Product>> deleteProduct(@RequestBody int productId) {
+        int rowsAffected = 0;
+        rowsAffected = DatabaseService.deleteProduct(productId);
         if(rowsAffected > 0){
             return new ResponseEntity(DatabaseService.getProducts().get(), HttpStatus.OK);
         }else{
