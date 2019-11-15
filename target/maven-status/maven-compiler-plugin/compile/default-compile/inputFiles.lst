@@ -16,6 +16,7 @@ C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bo
 C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bonzenshop\BackendService\security\JwtAuthenticationTokenFilter.java
 C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bonzenshop\BackendService\service\DatabaseService.java
 C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bonzenshop\BackendService\service\UserService.java
+C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bonzenshop\BackendService\model\SaveProductRequest.java
 C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bonzenshop\BackendService\security\JwtAuthenticationProvider.java
 C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bonzenshop\BackendService\service\JwtTokenService.java
 C:\Users\Daniel\Desktop\FHDW\4. Semester\WIP\BackendService\src\main\java\com\bonzenshop\BackendService\model\ChangeRoleRequest.java

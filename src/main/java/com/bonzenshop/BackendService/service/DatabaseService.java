@@ -1,9 +1,6 @@
 package com.bonzenshop.BackendService.service;
 
-import com.bonzenshop.BackendService.model.Account;
-import com.bonzenshop.BackendService.model.ChangeRoleRequest;
-import com.bonzenshop.BackendService.model.Order;
-import com.bonzenshop.BackendService.model.Product;
+import com.bonzenshop.BackendService.model.*;
 
 import java.io.File;
 import java.sql.*;
@@ -38,8 +35,7 @@ public class DatabaseService {
                         resultSet.getString("Description"),
                         resultSet.getString("Category"),
                         resultSet.getDouble("Price"),
-                        resultSet.getString("ImgData"),
-                        resultSet.getString("ImgType"),
+                        resultSet.getInt("Image"),
                         resultSet.getInt("OnStock")));
             }
             return Optional.ofNullable(products);
@@ -181,17 +177,22 @@ public class DatabaseService {
         }
     }
 
-    public static int addProduct(Product product) {
+    public static int addProduct(SaveProductRequest request) {
+        Product product = request.getProduct();
+        Image image = request.getImage();
         int rowsAffected = 0;
         try{
-            PreparedStatement statement = con.prepareStatement("INSERT INTO Products(Name, Description, Category, Price, OnStock, ImgData, ImgType) VALUES(?,?,?,?,?,?,?)");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Images(ImgData, ImgType) VALUES(?,?)");
+            statement.setString(1, image.getImgData());
+            statement.setString(2, image.getImgType());
+            statement.executeUpdate();
+
+            statement = con.prepareStatement("INSERT INTO Products(Name, Description, Category, Price, OnStock, Image) VALUES(?,?,?,?,?,last_insert_rowid())");
             statement.setString(1, product.getName());
             statement.setString(2, product.getDesc());
             statement.setString(3, product.getCategory());
             statement.setDouble(4, product.getPrice());
             statement.setDouble(5, product.getOnStock());
-            statement.setString(6, product.getImgData());
-            statement.setString(7, product.getImgType());
             rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
@@ -199,19 +200,35 @@ public class DatabaseService {
         return rowsAffected;
     }
 
-    public static int updateProduct(Product product) {
+    public static int updateProduct(SaveProductRequest request) {
+        Product product = request.getProduct();
+        Image image = request.getImage();
         int rowsAffected = 0;
         try{
-            PreparedStatement statement = con.prepareStatement("UPDATE Products SET Name = ?, Description = ?, Category = ?, Price = ?, OnStock = ?, ImgData = ?, ImgType = ? WHERE Id = ?");
-            statement.setString(1, product.getName());
-            statement.setString(2, product.getDesc());
-            statement.setString(3, product.getCategory());
-            statement.setDouble(4, product.getPrice());
-            statement.setDouble(5, product.getOnStock());
-            statement.setString(6, product.getImgData());
-            statement.setString(7, product.getImgType());
-            statement.setInt(8, product.getId());
-            rowsAffected = statement.executeUpdate();
+            if(image.getId() > 0){
+                PreparedStatement statement = con.prepareStatement("INSERT INTO Images(ImgData, ImgType) VALUES(?,?)");
+                statement.setString(1, image.getImgData());
+                statement.setString(2, image.getImgType());
+                statement.executeUpdate();
+
+                statement = con.prepareStatement("UPDATE Products SET Name = ?, Description = ?, Category = ?, Price = ?, OnStock = ?, Image = last_insert_rowid() WHERE Id = ?");
+                statement.setString(1, product.getName());
+                statement.setString(2, product.getDesc());
+                statement.setString(3, product.getCategory());
+                statement.setDouble(4, product.getPrice());
+                statement.setDouble(5, product.getOnStock());
+                statement.setInt(6, product.getId());
+                rowsAffected = statement.executeUpdate();
+            }else{
+                PreparedStatement statement = con.prepareStatement("UPDATE Products SET Name = ?, Description = ?, Category = ?, Price = ?, OnStock = ? WHERE Id = ?");
+                statement.setString(1, product.getName());
+                statement.setString(2, product.getDesc());
+                statement.setString(3, product.getCategory());
+                statement.setDouble(4, product.getPrice());
+                statement.setDouble(5, product.getOnStock());
+                statement.setInt(6, product.getId());
+                rowsAffected = statement.executeUpdate();
+            }
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -288,7 +305,7 @@ public class DatabaseService {
         return rowsAffected;
     }
 
-    public static int resetPasswort(int userId) {
+    public static int resetPassword(int userId) {
         int rowsAffected = 0;
         try{
             PreparedStatement statement = con.prepareStatement("UPDATE Users SET Password = 'ichbinreich' WHERE Id = ?");
@@ -310,6 +327,22 @@ public class DatabaseService {
             System.out.println("SQL Error: "+e.getMessage());
         }
         return rowsAffected;
+    }
+
+    public static Optional<List<Image>> getImages() {
+        try{
+            List<Image> images = new ArrayList<Image>();
+            ResultSet resultSet = con.createStatement().executeQuery("select * from Images");
+            while(resultSet.next()){
+                images.add(new Image(resultSet.getInt("Id"),
+                        resultSet.getString("ImgData"),
+                        resultSet.getString("ImgType")));
+            }
+            return Optional.ofNullable(images);
+        }catch(SQLException e){
+            System.out.println("SQL Error: "+e.getMessage());
+            return Optional.empty();
+        }
     }
 
     private static void initDB(){

@@ -20,3 +20,4 @@ com\bonzenshop\BackendService\model\JWTTokenResponse.class
 com\bonzenshop\BackendService\security\JwtAuthenticationException.class
 com\bonzenshop\BackendService\model\Account.class
 com\bonzenshop\BackendService\service\DatabaseService.class
+com\bonzenshop\BackendService\model\SaveProductRequest.class

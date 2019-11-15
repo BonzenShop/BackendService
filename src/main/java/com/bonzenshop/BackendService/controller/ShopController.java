@@ -1,10 +1,7 @@
 package com.bonzenshop.BackendService.controller;
 
 import com.bonzenshop.BackendService.exception.EntityNotFoundException;
-import com.bonzenshop.BackendService.model.Account;
-import com.bonzenshop.BackendService.model.ChangeRoleRequest;
-import com.bonzenshop.BackendService.model.Order;
-import com.bonzenshop.BackendService.model.Product;
+import com.bonzenshop.BackendService.model.*;
 import com.bonzenshop.BackendService.service.DatabaseService;
 import com.bonzenshop.BackendService.service.JwtTokenService;
 import org.springframework.http.HttpStatus;
@@ -72,12 +69,12 @@ public class ShopController {
 
     @PreAuthorize("hasAnyRole('Mitarbeiter', 'Admin')")
     @PostMapping("/saveProduct")
-    public ResponseEntity<List<Product>> saveProduct(@RequestBody Product product) {
+    public ResponseEntity<List<Product>> saveProduct(@RequestBody SaveProductRequest request) {
         int rowsAffected = 0;
-        if(product.getId() > 0){
-            rowsAffected = DatabaseService.updateProduct(product);
+        if(request.getProduct().getId() > 0){
+            rowsAffected = DatabaseService.updateProduct(request);
         }else{
-            rowsAffected = DatabaseService.addProduct(product);
+            rowsAffected = DatabaseService.addProduct(request);
         }
         if(rowsAffected > 0){
             return new ResponseEntity(DatabaseService.getProducts().get(), HttpStatus.OK);
@@ -102,7 +99,7 @@ public class ShopController {
     @PostMapping("/resetPassword")
     public ResponseEntity resetPassword(@RequestBody int userId) {
         int rowsAffected = 0;
-        rowsAffected = DatabaseService.resetPasswort(userId);
+        rowsAffected = DatabaseService.resetPassword(userId);
         if(rowsAffected > 0){
             return new ResponseEntity(HttpStatus.OK);
         }else{
@@ -119,6 +116,15 @@ public class ShopController {
             return new ResponseEntity(DatabaseService.getProducts().get(), HttpStatus.OK);
         }else{
             return  new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getImages")
+    public ResponseEntity<List<Image>> getImages() {
+        try{
+            return new ResponseEntity<List<Image>>(DatabaseService.getImages().get(), HttpStatus.OK);
+        }catch(NoSuchElementException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
