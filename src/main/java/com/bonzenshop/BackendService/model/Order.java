@@ -12,6 +12,7 @@ public class Order {
     private double price;
     private int amount;
     private double totalPrice;
+    private int image;
 
     @JsonCreator
     public Order(@JsonProperty int user,
@@ -20,7 +21,8 @@ public class Order {
                  @JsonProperty String category,
                  @JsonProperty double price,
                  @JsonProperty int amount,
-                 @JsonProperty double totalPrice){
+                 @JsonProperty double totalPrice,
+                 @JsonProperty int image){
         this.id = 0;
         this.user = user;
         this.orderDate = orderDate;
@@ -29,9 +31,10 @@ public class Order {
         this.price = price;
         this.amount = amount;
         this.totalPrice = totalPrice;
+        this.image = image;
     }
 
-    public Order(int id, int user, String orderDate, String name, String category, double price, int amount, double totalPrice) {
+    public Order(int id, int user, String orderDate, String name, String category, double price, int amount, double totalPrice, int image) {
         this.id = id;
         this.user = user;
         this.orderDate = orderDate;
@@ -40,6 +43,7 @@ public class Order {
         this.price = price;
         this.amount = amount;
         this.totalPrice = totalPrice;
+        this.image = image;
     }
 
     public int getId() {
@@ -104,5 +108,13 @@ public class Order {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
     }
 }

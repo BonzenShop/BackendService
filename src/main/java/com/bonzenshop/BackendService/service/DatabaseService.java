@@ -114,19 +114,20 @@ public class DatabaseService {
     public static int createOrder(List<Order> orderList) {
         int rowsAffected = 0;
         try{
-            PreparedStatement statement = con.prepareStatement("INSERT INTO Orders(User, OrderDate, Name, Category, Price, Amount, TotalPrice) VALUES(?,?,?,?,?,?,?)");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Orders(User, OrderDate, Name, Category, Price, Amount, TotalPrice, Image) VALUES(?,?,?,?,?,?,?,?)");
             for(int i = 0; i < orderList.size(); i++){
                 Order order = orderList.get(i);
                 if(i > 0){
-                    statement.addBatch(",(?,?,?,?,?,?,?)");
+                    statement.addBatch(",(?,?,?,?,?,?,?,?)");
                 }
-                statement.setInt(i*7+1, order.getUser());
-                statement.setString(i*7+2, order.getOrderDate());
-                statement.setString(i*7+3, order.getName());
-                statement.setString(i*7+4, order.getCategory());
-                statement.setDouble(i*7+5, order.getPrice());
-                statement.setInt(i*7+6, order.getAmount());
-                statement.setDouble(i*7+7, order.getTotalPrice());
+                statement.setInt(i*8+1, order.getUser());
+                statement.setString(i*8+2, order.getOrderDate());
+                statement.setString(i*8+3, order.getName());
+                statement.setString(i*8+4, order.getCategory());
+                statement.setDouble(i*8+5, order.getPrice());
+                statement.setInt(i*8+6, order.getAmount());
+                statement.setDouble(i*8+7, order.getTotalPrice());
+                statement.setDouble(i*8+8, order.getImage());
             }
             rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
@@ -147,7 +148,8 @@ public class DatabaseService {
                         resultSet.getString("Category"),
                         resultSet.getDouble("Price"),
                         resultSet.getInt("Amount"),
-                        resultSet.getDouble("TotalPrice")));
+                        resultSet.getDouble("TotalPrice"),
+                        resultSet.getInt("Image")));
             }
             return Optional.ofNullable(orders);
         }catch(SQLException e){
@@ -168,7 +170,8 @@ public class DatabaseService {
                         resultSet.getString("Category"),
                         resultSet.getDouble("Price"),
                         resultSet.getInt("Amount"),
-                        resultSet.getDouble("TotalPrice")));
+                        resultSet.getDouble("TotalPrice"),
+                        resultSet.getInt("Image")));
             }
             return Optional.ofNullable(orders);
         }catch(SQLException e){
@@ -204,8 +207,11 @@ public class DatabaseService {
         Product product = request.getProduct();
         Image image = request.getImage();
         int rowsAffected = 0;
+        System.out.println(image.getId());
+        System.out.println(product.getId());
+        System.out.println(product.getName());
         try{
-            if(image.getId() > 0){
+            if(image.getId() == 0){
                 PreparedStatement statement = con.prepareStatement("INSERT INTO Images(ImgData, ImgType) VALUES(?,?)");
                 statement.setString(1, image.getImgData());
                 statement.setString(2, image.getImgType());
@@ -350,7 +356,7 @@ public class DatabaseService {
             //create tables
             con.createStatement().execute("CREATE TABLE Products(Id INTEGER PRIMARY KEY, Name text, Description text, Category varchar(20), Price bigint, OnStock INTEGER, ImgData text, ImgType varchar(20))");
             con.createStatement().execute("CREATE TABLE Users(Id INTEGER PRIMARY KEY, FirstName text, LastName text, BirthDate date, Email text, Password text, Role varchar(20))");
-            con.createStatement().execute("CREATE TABLE Orders(Id INTEGER PRIMARY KEY, User INTEGER, OrderDate date, Name text, Category varchar(20), Price bigint,  Amount INTEGER, TotalPrice bigint, FOREIGN KEY(User) REFERENCES User(Id))");
+            con.createStatement().execute("CREATE TABLE Orders(Id INTEGER PRIMARY KEY, User INTEGER, OrderDate date, Name text, Category varchar(20), Price bigint,  Amount INTEGER, TotalPrice bigint, Image INTEGER, FOREIGN KEY(User) REFERENCES User(Id), FOREIGN KEY(Image) REFERENCES Images(Id))");
 
             //fill data user
             con.createStatement().execute("INSERT INTO Users(FirstName, Lastname, BirthDate, Email, Password, Role) VALUES " +
