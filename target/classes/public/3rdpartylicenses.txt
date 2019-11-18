@@ -130,9 +130,9 @@ THE SOFTWARE.
 
 @angular/material/sidenav
 
-@angular/material/snack-bar
+undefined
 
-@angular/material/table
+@angular/material/snack-bar
 
 @angular/material/tree
 
@@ -419,6 +419,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-
-undefined

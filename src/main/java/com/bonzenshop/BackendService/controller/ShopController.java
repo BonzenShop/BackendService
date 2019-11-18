@@ -26,6 +26,16 @@ public class ShopController {
 
     }
 
+    @GetMapping("/mainInfos")
+    public ResponseEntity<MainInfos> getMainInfos() {
+        try{
+            return new ResponseEntity<MainInfos>(DatabaseService.getMainInfos().get(), HttpStatus.OK);
+        }catch(NoSuchElementException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @GetMapping("/productList")
     public List<Product> getProductList() throws SQLException {
         return DatabaseService.getProducts().get();
@@ -38,7 +48,7 @@ public class ShopController {
     }
 
     @PostMapping("/order")
-    public ResponseEntity placeOrder(@RequestBody List<Order> orderList){
+    public ResponseEntity placeOrder(@RequestBody List<Order> orderList) {
         int rowsAffected = DatabaseService.createOrder(orderList);
         if(rowsAffected > 0){
             return new ResponseEntity(HttpStatus.OK);

@@ -29,18 +29,27 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<Account> createUser(@RequestBody Account account) {
-        DatabaseService.createAccount(account);
-        return new ResponseEntity<>(authenticationService.generateJWTToken(account.getEmail(), account.getPassword()), HttpStatus.OK);
+        if(DatabaseService.emailAlreadyTaken(account.getEmail(), 0)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }else{
+            DatabaseService.createAccount(account);
+            return new ResponseEntity<>(authenticationService.generateJWTToken(account.getEmail(), account.getPassword()), HttpStatus.OK);
+        }
     }
 
     @PostMapping("/updateUser")
     public ResponseEntity<Account> updateUser(@RequestBody Account account) {
-        int rowsAffected = DatabaseService.updateAccount(account);
-        if(rowsAffected > 0){
-            return new ResponseEntity<>(authenticationService.generateJWTToken(account.getId(), account.getEmail()), HttpStatus.OK);
-        }else{
+        if(DatabaseService.emailAlreadyTaken(account.getEmail(), account.getId())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }else{
+            int rowsAffected = DatabaseService.updateAccount(account);
+            if(rowsAffected > 0){
+                return new ResponseEntity<>(authenticationService.generateJWTToken(account.getId(), account.getEmail()), HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
         }
+
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
