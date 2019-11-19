@@ -4,6 +4,7 @@ com\bonzenshop\BackendService\model\Order.class
 com\bonzenshop\BackendService\BackendServiceApplication.class
 com\bonzenshop\BackendService\security\JwtAuthenticationProvider.class
 com\bonzenshop\BackendService\model\Image.class
+com\bonzenshop\BackendService\model\MainInfos.class
 com\bonzenshop\BackendService\service\UserService.class
 com\bonzenshop\BackendService\model\Product.class
 com\bonzenshop\BackendService\controller\ShopController.class
@@ -15,6 +16,7 @@ com\bonzenshop\BackendService\security\JwtAuthenticationEntryPoint.class
 com\bonzenshop\BackendService\security\JwtAuthenticationTokenFilter.class
 com\bonzenshop\BackendService\service\JwtTokenService.class
 com\bonzenshop\BackendService\config\WebSecurityConfig.class
+com\bonzenshop\BackendService\model\TopCustomer.class
 com\bonzenshop\BackendService\model\ChangeRoleRequest.class
 com\bonzenshop\BackendService\model\JWTTokenResponse.class
 com\bonzenshop\BackendService\security\JwtAuthenticationException.class
