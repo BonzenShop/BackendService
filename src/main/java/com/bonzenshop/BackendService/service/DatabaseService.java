@@ -1,4 +1,4 @@
-﻿package com.bonzenshop.BackendService.service;
+package com.bonzenshop.BackendService.service;
 
 import com.bonzenshop.BackendService.model.*;
 
@@ -325,10 +325,10 @@ public class DatabaseService {
         try{
             MainInfos mainInfos = new MainInfos();
             List<TopCustomer> topCustomerList = new ArrayList<TopCustomer>();
-            ResultSet bestsellerResult = con.createStatement().executeQuery("SELECT Id FROM Products WHERE Name = (SELECT Name FROM Orders GROUP BY Name ORDER BY SUM(Amount) DESC, SUM(TotalPrice) DESC LIMIT 1)");
+            ResultSet bestsellerResult = con.createStatement().executeQuery("SELECT Name FROM Products WHERE Name = (SELECT Name FROM Orders GROUP BY Name ORDER BY SUM(Amount) DESC, SUM(TotalPrice) DESC LIMIT 1)");
             ResultSet topCustomerResult = con.createStatement().executeQuery("SELECT (SELECT FirstName FROM Users WHERE Id = User) AS FirstName, (SELECT LastName FROM Users WHERE Id = User) AS LastName, SUM(TotalPrice) AS TotalPurchase FROM Orders GROUP BY User ORDER BY SUM(TotalPrice) DESC LIMIT 3");
             while(bestsellerResult.next()){
-                mainInfos.setBestsellerId(bestsellerResult.getInt("Id"));
+                mainInfos.setBestseller(bestsellerResult.getString("Name"));
             }
             while(topCustomerResult.next()){
                 topCustomerList.add(new TopCustomer(topCustomerResult.getRow(),

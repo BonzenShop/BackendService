@@ -3,15 +3,15 @@ package com.bonzenshop.BackendService.model;
 import java.util.List;
 
 public class MainInfos {
-    int bestsellerId;
+    String bestseller;
     List<TopCustomer> topCustomerList;
 
-    public int getBestsellerId() {
-        return bestsellerId;
+    public String getBestseller() {
+        return bestseller;
     }
 
-    public void setBestsellerId(int bestsellerId) {
-        this.bestsellerId = bestsellerId;
+    public void setBestseller(String bestseller) {
+        this.bestseller = bestseller;
     }
 
     public List<TopCustomer> getTopCustomerList() {
