@@ -129,7 +129,7 @@ public class DatabaseService {
                 statement.setString(i*8+4, order.getCategory());
                 statement.setDouble(i*8+5, order.getPrice());
                 statement.setInt(i*8+6, order.getAmount());
-                statement.setDouble(i*8+7, order.getTotalPrice());
+                statement.setDouble(i*8+7, order.getAmount()*order.getPrice());
                 statement.setDouble(i*8+8, order.getImage());
             }
             rowsAffected = statement.executeUpdate();
