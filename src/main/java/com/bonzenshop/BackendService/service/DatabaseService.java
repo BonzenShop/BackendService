@@ -54,7 +54,11 @@ public class DatabaseService {
                     resultSet.getString("FirstName"),
                     resultSet.getString("LastName"),
                     resultSet.getString("BirthDate"),
-                    resultSet.getString("Role")));
+                    resultSet.getString("Role"),
+                    resultSet.getString("Country"),
+                    resultSet.getString("City"),
+                    resultSet.getString("PostalCode"),
+                    resultSet.getString("Street")));
         }
 
         return accounts;
@@ -70,7 +74,11 @@ public class DatabaseService {
                     resultSet.getString("FirstName"),
                     resultSet.getString("LastName"),
                     resultSet.getString("BirthDate"),
-                    resultSet.getString("Role"));
+                    resultSet.getString("Role"),
+                    resultSet.getString("Country"),
+                    resultSet.getString("City"),
+                    resultSet.getString("PostalCode"),
+                    resultSet.getString("Street"));
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -87,7 +95,11 @@ public class DatabaseService {
                     resultSet.getString("FirstName"),
                     resultSet.getString("LastName"),
                     resultSet.getString("BirthDate"),
-                    resultSet.getString("Role"));
+                    resultSet.getString("Role"),
+                    resultSet.getString("Country"),
+                    resultSet.getString("City"),
+                    resultSet.getString("PostalCode"),
+                    resultSet.getString("Street"));
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
         }
@@ -97,13 +109,17 @@ public class DatabaseService {
     public static int createAccount(Account account) {
         int rowsAffected = 0;
         try{
-            PreparedStatement statement = con.prepareStatement("INSERT INTO Users(FirstName,LastName,BirthDate,Email,Password,Role) VALUES(?,?,?,?,?,?)");
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Users(FirstName,LastName,BirthDate,Email,Password,Role,Country,City,PostalCode,Street) VALUES(?,?,?,?,?,?,?,?,?,?)");
             statement.setString(1, account.getFirstName());
             statement.setString(2, account.getLastName());
             statement.setString(3, account.getBirthDate());
             statement.setString(4, account.getEmail());
             statement.setString(5, account.getPassword());
             statement.setString(6, account.getRole());
+            statement.setString(7, account.getCountry());
+            statement.setString(8, account.getCity());
+            statement.setString(9, account.getPostalCode());
+            statement.setString(10, account.getStreet());
             rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
             System.out.println("SQL Error: "+e.getMessage());
@@ -249,17 +265,21 @@ public class DatabaseService {
         try{
             PreparedStatement statement;
             if(account.getPassword() != null && !account.getPassword().trim().isEmpty()){
-                statement = con.prepareStatement("UPDATE Users SET FirstName = ?, LastName = ?, Email = ?, BirthDate = ?, Password = ? WHERE Id = ?");
-                statement.setString(5, account.getPassword());
-                statement.setInt(6, account.getId());
+                statement = con.prepareStatement("UPDATE Users SET FirstName = ?, LastName = ?, Email = ?, BirthDate = ?, Country = ?, City = ?, PostalCode = ?, Street = ?, Password = ? WHERE Id = ?");
+                statement.setString(9, account.getPassword());
+                statement.setInt(10, account.getId());
             }else{
-                statement = con.prepareStatement("UPDATE Users SET FirstName = ?, LastName = ?, Email = ?, BirthDate = ? WHERE Id = ?");;
-                statement.setInt(5, account.getId());
+                statement = con.prepareStatement("UPDATE Users SET FirstName = ?, LastName = ?, Email = ?, BirthDate = ?, Country = ?, City = ?, PostalCode = ?, Street = ? WHERE Id = ?");;
+                statement.setInt(9, account.getId());
             }
             statement.setString(1, account.getFirstName());
             statement.setString(2, account.getLastName());
             statement.setString(3, account.getEmail());
             statement.setString(4, account.getBirthDate());
+            statement.setString(5, account.getCountry());
+            statement.setString(6, account.getCity());
+            statement.setString(7, account.getPostalCode());
+            statement.setString(8, account.getStreet());
 
             rowsAffected = statement.executeUpdate();
         }catch(SQLException e){
@@ -326,7 +346,7 @@ public class DatabaseService {
             MainInfos mainInfos = new MainInfos();
             List<TopCustomer> topCustomerList = new ArrayList<TopCustomer>();
             ResultSet bestsellerResult = con.createStatement().executeQuery("SELECT Name FROM Products WHERE Name = (SELECT Name FROM Orders GROUP BY Name ORDER BY SUM(Amount) DESC, SUM(TotalPrice) DESC LIMIT 1)");
-            ResultSet topCustomerResult = con.createStatement().executeQuery("SELECT (SELECT FirstName FROM Users WHERE Id = User) AS FirstName, (SELECT LastName FROM Users WHERE Id = User) AS LastName, SUM(TotalPrice) AS TotalPurchase FROM Orders GROUP BY User ORDER BY SUM(TotalPrice) DESC LIMIT 3");
+            ResultSet topCustomerResult = con.createStatement().executeQuery("SELECT (SELECT FirstName FROM Users WHERE Id = User) AS FirstName, (SELECT LastName FROM Users WHERE Id = User) AS LastName, SUM(TotalPrice) AS TotalPurchase FROM Orders GROUP BY User ORDER BY SUM(TotalPrice) DESC LIMIT 5");
             while(bestsellerResult.next()){
                 mainInfos.setBestseller(bestsellerResult.getString("Name"));
             }
@@ -348,7 +368,7 @@ public class DatabaseService {
         try{
             PreparedStatement statement = con.prepareStatement("SELECT Id FROM Users WHERE Email = ? AND Id != ?");;
             statement.setString(1, email);
-            statement.setInt(1, exceptOfId);
+            statement.setInt(2, exceptOfId);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         }catch(SQLException e){
