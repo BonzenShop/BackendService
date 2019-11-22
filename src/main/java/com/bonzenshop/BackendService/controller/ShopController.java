@@ -10,8 +10,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.crypto.Data;
 import javax.xml.ws.Response;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -136,6 +138,14 @@ public class ShopController {
         }catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    //endpoint to redirect to index.html
+    //is needed if a specific angular path is called, that the backend does not not
+    //in this case it is redirected to the angular app
+    @GetMapping("/**/{path:[^.]*}")
+    public void redirect(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/");
     }
 
 }
