@@ -6,7 +6,6 @@ import com.bonzenshop.BackendService.security.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,14 +14,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.Resource;
 
-
+/**
+ * Klasse zur Konfiguration der Sicherheitseinstellungen.
+ */
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @Configuration
 @EnableWebSecurity
@@ -53,23 +50,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationTokenFilter();
     }
 
+    /**
+     * HTTP-Sicherheitseinstellungen des Spring Security Frameworks werden gesetzt.
+     * @param httpSecurity Das HttpSecurity Objekt, welches die Sicherheitseinstellungen beinhaltet.
+     * @throws Exception Falls beim Ausschalten der CSRF oder bei Einschalten von CacheControl etwas fehlschlägt.
+     */
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests()
-                .mvcMatchers(HttpMethod.GET, "/userList").authenticated()
-                .mvcMatchers(HttpMethod.GET, "/orderList").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/order").authenticated()
-                .mvcMatchers(HttpMethod.GET, "/myOrderList").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/saveProduct").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/updateUser").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/saveProduct").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/changeRole").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/resetPassword").authenticated()
-                .mvcMatchers(HttpMethod.POST, "/deleteProduct").authenticated();
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
         httpSecurity.headers().cacheControl();

@@ -12,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import com.bonzenshop.BackendService.service.JwtTokenService;
 
+/**
+ * Diese Klasse implementiert den AuthenticationProvider von Spring Security und stellt den Provider für die JWT-Authentifizierung dar.
+ */
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
@@ -32,6 +35,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         this.jwtService = jwtService;
     }
 
+    /**
+     * Hier wird der Token, der im {@link JwtAuthenticationTokenFilter} extrahiert wurde, ausgewertet.
+     * Zusätzlich wird die E-Mail aus dem Token extrahiert und, falls der Token valide ist, als JwtAuthenticatedProfile zurückgegeben.
+     * @param authentication der im {@link JwtAuthenticationTokenFilter} extrahierte Benutzer
+     * @return JwtAuthenticatedProfile
+     * @throws AuthenticationException Falls der Token nicht valide ist.
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
@@ -50,8 +60,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         }
     }
 
+    /**
+     * Methode, welche informiert, ob die übergebene Authetifizierungsmethode von diesem Provider unterstützt wird.
+     * @param authentication Die zu überprüfende Authentifizierungsmethode
+     * @return true, falls die Methode unterstützt wird. Ansonsten false.
+     */
     @Override
     public boolean supports(Class<?> authentication) {
-        return JwtAuthentication.class.equals(authentication);
+        return JwtAuthenticatedProfile.class.equals(authentication);
     }
 }

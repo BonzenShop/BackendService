@@ -5,7 +5,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,8 +17,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
+/**
+ * Filter, der jeden Request an das Backend filtert
+ */
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
@@ -29,16 +30,26 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenService jwtTokenService;
 
+    /**
+     * Der Header-Name des Headers, in welchem der JWT übergeben wird
+     */
     private static String tokenHeader = "Authorization";
 
+    /**
+     * Methode, die jeden Request filtert.
+     * Der JWT wird aus dem Request Object übernommen und an den SecurityContext von Spring Security übergeben.
+     * Die Übergabe an den SecurityContext sorgt dafür, dass der Token von Spring Security ausgewertet wird.
+     * @param request Request
+     * @param response Antwort für den Aufruf
+     * @param chain FilterChain
+     * @throws ServletException Falls das Filtern fehlschägt.
+     * @throws IOException Falls das Filtern fehlschlägt.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final String requestHeader = request.getHeader(tokenHeader);
         String username = null;
         String authToken = null;
-        /*for (Enumeration<String> e = request.getHeaderNames(); e.hasMoreElements();)
-            System.out.println(e.nextElement());
-        System.out.println(request);*/
         if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
             authToken = requestHeader.substring(7);
             try {
@@ -57,8 +68,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtTokenService.validateToken(authToken, userDetails).get()) {
-                UsernamePasswordAuthenticationToken authentication = jwtTokenService.getAuthentication(authToken, SecurityContextHolder.getContext().getAuthentication(), userDetails);
-                //UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, Arrays.asList(new SimpleGrantedAuthority("ROLE_Admin")));
+                UsernamePasswordAuthenticationToken authentication = jwtTokenService.getAuthentication(authToken, userDetails);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 logger.info("authenticated user " + username + ", setting security context");
                 SecurityContextHolder.getContext().setAuthentication(authentication);

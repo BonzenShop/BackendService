@@ -2,8 +2,17 @@ package com.bonzenshop.BackendService.model;
 
 import java.util.List;
 
+/**
+ * Klasse, welche alle Informationen beinhaltet, die für die Startseite des Webshops nötig sind.
+ */
 public class MainInfos {
+    /**
+     * Der Name des meistverkauften Produktes
+     */
     String bestseller;
+    /**
+     * Liste der Top Kunden (mit dem höchsten Gesamteinkaufswert)
+     */
     List<TopCustomer> topCustomerList;
 
     public String getBestseller() {

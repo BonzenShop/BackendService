@@ -1,24 +1,32 @@
 package com.bonzenshop.BackendService.model;
 
+/**
+ * Top Kunde des Webshops. Wird für die Auflistung der top Kunden benötigt.
+ */
 public class TopCustomer {
-    int ranking;
+    /**
+     * Vorname des Kunden
+     */
     String firstName;
+    /**
+     * Nachname des Kunden
+     */
     String lastName;
+    /**
+     * Gesamteinkaufswert des Kunden
+     */
     double totalPurchase;
 
-    public TopCustomer(int ranking, String firstName, String lastName, double totalPurchase) {
-        this.ranking = ranking;
+    /**
+     * Alle Attribute werden übergeben
+     * @param firstName Vorname
+     * @param lastName Nachname
+     * @param totalPurchase Gesamteinkaufswert
+     */
+    public TopCustomer(String firstName, String lastName, double totalPurchase) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.totalPurchase = totalPurchase;
-    }
-
-    public int getRanking() {
-        return ranking;
-    }
-
-    public void setRanking(int ranking) {
-        this.ranking = ranking;
     }
 
     public String getFirstName() {

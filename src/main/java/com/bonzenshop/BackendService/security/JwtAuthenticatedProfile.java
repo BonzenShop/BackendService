@@ -8,10 +8,10 @@ import java.util.Collection;
 
 public class JwtAuthenticatedProfile implements Authentication {
 
-    private final String username;
+    private final String USERNAME;
 
     public JwtAuthenticatedProfile(String username) {
-        this.username = username;
+        this.USERNAME = username;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class JwtAuthenticatedProfile implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return username;
+        return USERNAME;
     }
 
     @Override
@@ -46,6 +46,6 @@ public class JwtAuthenticatedProfile implements Authentication {
 
     @Override
     public String getName() {
-        return username;
+        return USERNAME;
     }
 }
