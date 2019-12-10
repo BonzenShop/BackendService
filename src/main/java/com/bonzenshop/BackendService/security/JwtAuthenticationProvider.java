@@ -1,5 +1,6 @@
 package com.bonzenshop.BackendService.security;
 
+import com.bonzenshop.BackendService.exception.JwtAuthenticationException;
 import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

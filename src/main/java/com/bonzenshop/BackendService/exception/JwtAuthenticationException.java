@@ -1,4 +1,4 @@
-package com.bonzenshop.BackendService.security;
+package com.bonzenshop.BackendService.exception;
 
 import org.springframework.security.core.AuthenticationException;
 
